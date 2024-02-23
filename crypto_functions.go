@@ -21,11 +21,11 @@ func decodeBase64Data(data string) (string, error) {
 	return string(decodedData), err
 }
 
-func verifyData(verifiedData string, dataToVerify string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(verifiedData), []byte(dataToVerify))
-	if err != nil {
-		return false
-	} else {
-		return true
-	}
+func verifyHash(verifiedHash string, dataToVerify string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(verifiedHash), []byte(dataToVerify))
+	return err
+}
+
+func getTokenIdentifier(token string) string {
+	return token[len(token)-6:]
 }

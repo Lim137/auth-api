@@ -25,7 +25,8 @@ func main() {
 		MaxAge:           300,
 	}))
 	v1Router := chi.NewRouter()
-	v1Router.Get("/tokens/{guid}", tokensHandler)
+	v1Router.Post("/tokens/{guid}", tokensHandler)
+	v1Router.Post("/tokens/refresh", refreshTokensHandler)
 
 	router.Mount("/v1", v1Router)
 	srv := &http.Server{
