@@ -12,8 +12,6 @@ import (
 
 func main() {
 	godotenv.Load(".env")
-	// secretKeyString := os.Getenv("SECRET_KEY")
-	// fmt.Println(secretKeyString)
 	portString := os.Getenv("PORT")
 	router := chi.NewRouter()
 	router.Use(cors.Handler(cors.Options{
@@ -25,7 +23,7 @@ func main() {
 		MaxAge:           300,
 	}))
 	v1Router := chi.NewRouter()
-	v1Router.Post("/tokens/{guid}", tokensHandler)
+	v1Router.Get("/tokens/{guid}", tokensHandler)
 	v1Router.Post("/tokens/refresh", refreshTokensHandler)
 
 	router.Mount("/v1", v1Router)

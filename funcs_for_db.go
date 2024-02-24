@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -12,10 +11,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var client *mongo.Client
+
+func dbConnectInit() {
+
+}
 func connectToDBCollection() (context.Context, context.CancelFunc, *mongo.Collection, *mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI("mongodb://localhost:27017"))
+	db_server := os.Getenv("DATABASE_SERVER")
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(db_server))
 	if err != nil {
 		return nil, nil, nil, nil, err
 	}
@@ -50,7 +54,6 @@ func writeRefreshTokenToDB(refreshToken string, validUntil int64, userID string)
 }
 
 func isUniqueUserId(userID string) error {
-
 	ctx, cancel, collection, client, err := connectToDBCollection()
 	defer cancel()
 	if err != nil {
@@ -85,7 +88,6 @@ func getDocByUserID(userID string) (bson.D, error) {
 	}()
 	var doc bson.D
 	err = collection.FindOne(ctx, bson.D{{"user_id", userID}}).Decode(&doc)
-	fmt.Println("user_id", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -111,5 +113,3 @@ func updateRefreshTokenInDB(userID string, refreshToken string, validUntil int64
 
 	return nil
 }
-
-// {{"refresh_token", "created_at", "user_id"}, {refreshToken, createdAt, userID}}
